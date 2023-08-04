@@ -1,16 +1,16 @@
 const std = @import("std");
 const process = std.process;
+const print = std.debug.print;
+const mem = std.mem;
 
-pub fn fatal(comptime format: []const u8, args: anytype) noreturn {
-    std.log.err(format, args);
-    process.exit(1);
-}
+const version = "v0.0.1";
 
 const normal_usage =
     \\Usage: rootkeeper [command] [options]
     \\
     \\Commands:
     \\
+    \\  help             Prints this help text and exit
     \\  init             Initialize a new repository with rootkeeper
     \\  version          Print version number and exit
     \\
@@ -20,15 +20,66 @@ const normal_usage =
     \\
 ;
 
+pub fn fatal(comptime format: []const u8, args: anytype) noreturn {
+    std.log.err(format, args);
+    process.exit(1);
+}
+
+const Command = enum {
+    help,
+    init,
+    version,
+};
+
+pub fn print_help() noreturn {
+    print(normal_usage, .{});
+    process.exit(0);
+}
+
+pub fn print_version() noreturn {
+    print(version, .{});
+    process.exit(0);
+}
+
+pub fn parse_command(cmd: []const u8) Command {
+    if (mem.eql(u8, "help", cmd)) {
+        return Command.help;
+    } else if (mem.eql(u8, "init", cmd)) {
+        return Command.init;
+    } else if (mem.eql(u8, "version", cmd)) {
+        return Command.version;
+    } else {
+        fatal("Unknown command: {s}", .{cmd});
+    }
+}
+
+// pub fn parse_command_args() {}
+
+// pub fn parse_flags() {}
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-    defer _ = gpa.deinit();
 
     const args = try std.process.argsAlloc(allocator);
+    defer std.process.argsFree(allocator, args);
     if (args.len <= 1) {
-        std.log.info("{s}", .{normal_usage});
-        fatal("expected command argument", .{});
+        fatal("Expected a command. Try 'help'.", .{});
+    }
+
+    const cmd = parse_command(args[1]);
+    // const cmd_args = args[2..];
+
+    switch (cmd) {
+        Command.help => {
+            print_help();
+        },
+        Command.init => {
+            print("We are in: {}", .{cmd});
+        },
+        Command.version => {
+            print_version();
+        },
     }
 }
 
