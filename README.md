@@ -23,14 +23,16 @@ General Options:
 
 ## Dependencies
 
-- `zig`
-- `just`
+- `zig` version `0.11.0` (https://ziglang.org/learn/getting-started/)
+- `just` (https://just.systems/man/en/)
 
 ```shell
 $ just --list
 Available recipes:
     build   # build project
+    clean   # delete the build output and cache
     default # list out all tasks
+    fmt     # format the codebase using zig fmt
     run     # build and then run the binary
     test    # run tests
 ```
