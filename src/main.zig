@@ -1,19 +1,35 @@
 const std = @import("std");
+const process = std.process;
+
+pub fn fatal(comptime format: []const u8, args: anytype) noreturn {
+    std.log.err(format, args);
+    process.exit(1);
+}
+
+const normal_usage =
+    \\Usage: rootkeeper [command] [options]
+    \\
+    \\Commands:
+    \\
+    \\  init             Initialize a new repository with rootkeeper
+    \\  version          Print version number and exit
+    \\
+    \\General Options:
+    \\
+    \\  -h, --help       Print command-specific usage
+    \\
+;
 
 pub fn main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    defer _ = gpa.deinit();
 
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
-
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
-
-    try bw.flush(); // don't forget to flush!
+    const args = try std.process.argsAlloc(allocator);
+    if (args.len <= 1) {
+        std.log.info("{s}", .{normal_usage});
+        fatal("expected command argument", .{});
+    }
 }
 
 test "simple test" {
