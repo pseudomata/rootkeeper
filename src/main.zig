@@ -5,7 +5,7 @@ const mem = std.mem;
 
 const version = "v0.0.1";
 
-const normal_usage =
+const usage =
     \\Usage: rootkeeper [command] [options]
     \\
     \\Commands:
@@ -31,17 +31,17 @@ const Command = enum {
     version,
 };
 
-pub fn print_help() noreturn {
-    print(normal_usage, .{});
+pub fn printHelp() noreturn {
+    print(usage, .{});
     process.exit(0);
 }
 
-pub fn print_version() noreturn {
+pub fn printVersion() noreturn {
     print(version, .{});
     process.exit(0);
 }
 
-pub fn parse_command(cmd: []const u8) Command {
+pub fn parseCommand(cmd: []const u8) Command {
     if (mem.eql(u8, "help", cmd)) {
         return Command.help;
     } else if (mem.eql(u8, "init", cmd)) {
@@ -67,18 +67,18 @@ pub fn main() !void {
         fatal("Expected a command. Try 'help'.", .{});
     }
 
-    const cmd = parse_command(args[1]);
+    const cmd = parseCommand(args[1]);
     // const cmd_args = args[2..];
 
     switch (cmd) {
         Command.help => {
-            print_help();
+            printHelp();
         },
         Command.init => {
             print("We are in: {}", .{cmd});
         },
         Command.version => {
-            print_version();
+            printVersion();
         },
     }
 }
