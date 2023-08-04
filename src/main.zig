@@ -56,6 +56,8 @@ pub fn parseCommand(cmd: []const u8) Command {
         return Command.help;
     } else if (mem.eql(u8, "init", cmd)) {
         return Command.init;
+    } else if (mem.eql(u8, "update", cmd)) {
+        return Command.update;
     } else if (mem.eql(u8, "version", cmd)) {
         return Command.version;
     } else {
