@@ -31,7 +31,7 @@ const Command = enum {
 };
 
 const Options = struct {
-    config: []u8 = "Rootfile",
+    config: []const u8 = "Rootfile",
     help: bool = false,
     verbose: bool = false,
 };
@@ -84,12 +84,12 @@ pub fn parseOptions(args: [][]u8) Options {
     return opts;
 }
 
-pub fn initializeRepo(opts: Options) noreturn {
+pub fn initializeRepo(opts: Options) void {
     _ = opts;
     print("initialize repo", .{});
 }
 
-pub fn updateRepo(opts: Options) noreturn {
+pub fn updateRepo(opts: Options) void {
     _ = opts;
     print("update repo", .{});
 }
@@ -124,5 +124,5 @@ pub fn main() !void {
     const cmd = parseCommand(args[1]);
     const opts = parseOptions(args[2..]);
 
-    executeCommand(cmd, opts);
+    try executeCommand(cmd, opts);
 }
