@@ -147,8 +147,8 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    const args = try std.process.argsAlloc(allocator);
-    defer std.process.argsFree(allocator, args);
+    const args = try process.argsAlloc(allocator);
+    defer process.argsFree(allocator, args);
     if (args.len <= 1) {
         fatal("Expected a command. Try 'help'.", .{});
     }
